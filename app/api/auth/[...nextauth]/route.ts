@@ -1,9 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { compare } from "bcrypt";
-import { sql } from "@vercel/postgres";
+import axios from "axios";
 
-const handler = NextAuth({
+NextAuth({
   session: {
     strategy: "jwt",
   },
@@ -17,29 +16,20 @@ const handler = NextAuth({
         password: {},
       },
       async authorize(credentials, req) {
-        //
-        const response = await sql`
-        SELECT * FROM users WHERE email=${credentials?.email}`;
-        const user = response.rows[0];
-
-        const passwordCorrect = await compare(
-          credentials?.password || "",
-          user.password
-        );
-
-        console.log({ passwordCorrect });
-
-        if (passwordCorrect) {
-          return {
-            id: user.id,
-            email: user.email,
-          };
+        try {
+          const response = await axios.post(
+            "http://localhost:5000/login",
+            credentials
+          );
+          const data = response.data;
+          if (data.status === 200) {
+            return data.user;
+          }
+        } catch (error) {
+          console.error("Error authorizing user:", error);
         }
-
         return null;
       },
     }),
   ],
 });
-
-export { handler as GET, handler as POST };

@@ -17,10 +17,10 @@ export default function RegisterForm() {
   } = useForm<RegisterValidationSchema>({
     resolver: zodResolver(registerValidationSchema),
     defaultValues: {
-      email: "email@email.em",
-      fullName: "full name",
-      password: "password",
-      confirmPassword: "password",
+      email: "",
+      fullName: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
