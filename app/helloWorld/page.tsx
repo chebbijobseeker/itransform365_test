@@ -12,6 +12,12 @@ export default function HelloWorld() {
   const user = useStore((state) => state.user);
   console.log("this is user", user);
 
+  const handleLogout = async () => {
+    await signOut();
+    setLoading(true); // Reset loading state when logging out
+    router.push("/");
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
       const session = await getSession();
@@ -24,7 +30,7 @@ export default function HelloWorld() {
     };
 
     checkAuth();
-  }, [user]);
+  }, []);
 
   if (loading) {
     return <LoadingPage />;
@@ -40,10 +46,7 @@ export default function HelloWorld() {
           </p>
           <div className="flex justify-center">
             <button
-              onClick={async () => {
-                await signOut();
-                router.push("/");
-              }}
+              onClick={handleLogout}
               className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded"
             >
               Logout

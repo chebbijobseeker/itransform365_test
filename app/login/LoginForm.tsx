@@ -38,7 +38,6 @@ export default function LoginForm() {
       if (result?.error) {
         console.error("Login failed:", result.error);
       } else {
-        console.log("here is result my friend", result);
         setUser(result);
         router.push("/helloWorld");
         // console.log("yahari");
