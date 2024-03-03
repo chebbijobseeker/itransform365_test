@@ -26,8 +26,8 @@ export default function LoginForm() {
   } = useForm<LoginValidationSchema>({
     resolver: zodResolver(loginValidationSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "itransform@gmail.com",
+      password: "password",
     },
   });
 

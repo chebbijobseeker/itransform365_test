@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
@@ -9,10 +10,14 @@ import {
 import axios from "axios";
 import { useState } from "react";
 import LoadingButton from "../components/LoadingButton";
+import { signIn } from "next-auth/react";
+import useStore from "../stores/store";
 //import registerUser from "../actions/register";
 
 export default function RegisterForm() {
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { setUser } = useStore();
   const {
     register,
     handleSubmit,
@@ -20,10 +25,10 @@ export default function RegisterForm() {
   } = useForm<RegisterValidationSchema>({
     resolver: zodResolver(registerValidationSchema),
     defaultValues: {
-      email: "",
-      fullName: "",
-      password: "",
-      confirmPassword: "",
+      email: "itransform@gmail.com",
+      fullName: "fullname",
+      password: "password",
+      confirmPassword: "password",
     },
   });
 
@@ -33,7 +38,15 @@ export default function RegisterForm() {
     try {
       setLoading(true);
       await axios.post("http://localhost:5000/register", data);
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+      console.log({ result });
+      setUser(result);
       setLoading(false);
+      router.push("/helloWorld");
     } catch (error) {
       // Handle errors, such as network issues or server errors
       setLoading(false);
