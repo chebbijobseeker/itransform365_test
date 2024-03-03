@@ -10,15 +10,19 @@ import {
 } from "./loginValidationSchema";
 import { useRouter } from "next/navigation";
 import useStore from "../stores/store";
+import { useState } from "react";
+import LoadingButton from "../components/LoadingButton";
 
 export default function LoginForm() {
   const router = useRouter();
   const { setUser } = useStore();
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState(false);
 
   const {
     register,
     handleSubmit,
-    // formState: { errors },
+    formState: { errors },
   } = useForm<LoginValidationSchema>({
     resolver: zodResolver(loginValidationSchema),
     defaultValues: {
@@ -29,6 +33,7 @@ export default function LoginForm() {
 
   const onSubmit: SubmitHandler<LoginValidationSchema> = async (data) => {
     try {
+      setLoading(true);
       const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
@@ -36,12 +41,13 @@ export default function LoginForm() {
       });
 
       if (result?.error) {
+        setServerError(true);
         console.error("Login failed:", result.error);
       } else {
         setUser(result);
         router.push("/helloWorld");
-        // console.log("yahari");
       }
+      setLoading(false);
     } catch (error) {
       console.error("Error logging in:", error);
     }
@@ -63,6 +69,9 @@ export default function LoginForm() {
           placeholder="Enter your email address"
           {...register("email")}
         />
+        {errors.email && (
+          <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+        )}
       </div>
       <div className="mb-6">
         <label
@@ -78,10 +87,14 @@ export default function LoginForm() {
           placeholder="Enter your password"
           {...register("password")}
         />
+        {errors.password && (
+          <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+        )}
       </div>
-      <button type="submit" className="btn btn-primary btn-block">
-        Login
-      </button>
+      <LoadingButton buttonText="Login" isLoading={loading} />
+      {serverError && (
+        <p className="text-red-500 text-xs mt-4">Wrong email or password</p>
+      )}
     </form>
   );
 }

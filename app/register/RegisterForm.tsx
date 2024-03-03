@@ -7,13 +7,16 @@ import {
   registerValidationSchema,
 } from "./registerValidationSchema";
 import axios from "axios";
+import { useState } from "react";
+import LoadingButton from "../components/LoadingButton";
 //import registerUser from "../actions/register";
 
 export default function RegisterForm() {
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
-    // formState: { errors },
+    formState: { errors },
   } = useForm<RegisterValidationSchema>({
     resolver: zodResolver(registerValidationSchema),
     defaultValues: {
@@ -28,10 +31,12 @@ export default function RegisterForm() {
     data: RegisterValidationSchema
   ) => {
     try {
-      const response = await axios.post("http://localhost:5000/register", data);
-      console.log(response.data);
+      setLoading(true);
+      await axios.post("http://localhost:5000/register", data);
+      setLoading(false);
     } catch (error) {
       // Handle errors, such as network issues or server errors
+      setLoading(false);
       console.error("Error registering user:", error);
     }
   };
@@ -52,6 +57,11 @@ export default function RegisterForm() {
           placeholder="Enter your full name"
           {...register("fullName")}
         />
+        {errors.fullName && (
+          <p className="text-red-500 text-xs italic">
+            {errors.fullName.message}
+          </p>
+        )}
       </div>
       <div className="mb-6">
         <label
@@ -67,6 +77,9 @@ export default function RegisterForm() {
           placeholder="Enter your email address"
           {...register("email")}
         />
+        {errors.email && (
+          <p className="text-red-500 text-xs italic">{errors.email.message}</p>
+        )}
       </div>
       <div className="mb-6">
         <label
@@ -82,6 +95,11 @@ export default function RegisterForm() {
           placeholder="Enter your password"
           {...register("password")}
         />
+        {errors.password && (
+          <p className="text-red-500 text-xs italic">
+            {errors.password.message}
+          </p>
+        )}
       </div>
       <div className="mb-6">
         <label
@@ -97,13 +115,17 @@ export default function RegisterForm() {
           placeholder="Confirm your password"
           {...register("confirmPassword")}
         />
+        {errors.confirmPassword && (
+          <p className="text-red-500 text-xs italic">
+            {errors.confirmPassword.message}
+          </p>
+        )}
       </div>
-      <button
-        type="submit"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-      >
-        Submit
-      </button>
+      <LoadingButton
+        buttonText="register"
+        isLoading={loading}
+        // className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+      ></LoadingButton>
     </form>
   );
 }

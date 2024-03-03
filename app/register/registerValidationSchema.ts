@@ -2,10 +2,10 @@ import { z } from "zod";
 
 const registerValidationSchema = z
   .object({
-    fullName: z.string(),
-    email: z.string().email(),
-    password: z.string(),
-    confirmPassword: z.string(),
+    fullName: z.string().min(1).max(255).optional(),
+    email: z.string().email().min(1).max(255),
+    password: z.string().min(1).max(255),
+    confirmPassword: z.string().min(1).max(255),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",

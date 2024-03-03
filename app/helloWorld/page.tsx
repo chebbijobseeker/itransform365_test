@@ -5,16 +5,16 @@ import { signOut, getSession } from "next-auth/react";
 
 import LoadingPage from "./LoadingPage";
 import useStore from "../stores/store";
+import LoadingButton from "../components/LoadingButton";
 
 export default function HelloWorld() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const user = useStore((state) => state.user);
-  console.log("this is user", user);
 
   const handleLogout = async () => {
+    setLoading(true); // Set loading to true when logging out
     await signOut();
-    setLoading(true); // Reset loading state when logging out
     router.push("/");
   };
 
@@ -45,12 +45,11 @@ export default function HelloWorld() {
             This is a simple "Hello, World!
           </p>
           <div className="flex justify-center">
-            <button
+            <LoadingButton
+              buttonText="Logout"
+              isLoading={loading}
               onClick={handleLogout}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded"
-            >
-              Logout
-            </button>
+            />
           </div>
         </div>
       </div>
