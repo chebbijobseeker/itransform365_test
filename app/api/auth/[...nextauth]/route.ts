@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 
-NextAuth({
+const handler = NextAuth({
   session: {
     strategy: "jwt",
   },
@@ -23,7 +23,7 @@ NextAuth({
           );
           const data = response.data;
           if (data.status === 200) {
-            return data.user;
+            return data;
           }
         } catch (error) {
           console.error("Error authorizing user:", error);
@@ -33,3 +33,5 @@ NextAuth({
     }),
   ],
 });
+
+export { handler as GET, handler as POST };

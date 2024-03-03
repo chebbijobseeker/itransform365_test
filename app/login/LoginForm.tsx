@@ -8,9 +8,13 @@ import {
   type LoginValidationSchema,
   loginValidationSchema,
 } from "./loginValidationSchema";
+import { useRouter } from "next/navigation";
+import useStore from "../stores/store";
 
 export default function LoginForm() {
-  //const router = useRouter();
+  const router = useRouter();
+  const { setUser } = useStore();
+
   const {
     register,
     handleSubmit,
@@ -34,8 +38,10 @@ export default function LoginForm() {
       if (result?.error) {
         console.error("Login failed:", result.error);
       } else {
-        //router.push("/helloWorld");
-        console.log("yahari");
+        console.log("here is result my friend", result);
+        setUser(result);
+        router.push("/helloWorld");
+        // console.log("yahari");
       }
     } catch (error) {
       console.error("Error logging in:", error);
