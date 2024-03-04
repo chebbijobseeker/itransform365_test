@@ -9,13 +9,12 @@ import {
   loginValidationSchema,
 } from "./loginValidationSchema";
 import { useRouter } from "next/navigation";
-import useStore from "../stores/store";
 import { useState } from "react";
 import LoadingButton from "../components/LoadingButton";
 
 export default function LoginForm() {
   const router = useRouter();
-  const { setUser } = useStore();
+
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState(false);
 
@@ -27,7 +26,7 @@ export default function LoginForm() {
     resolver: zodResolver(loginValidationSchema),
     defaultValues: {
       email: "itransform@gmail.com",
-      password: "password",
+      password: "test123456",
     },
   });
 
@@ -44,7 +43,6 @@ export default function LoginForm() {
         setServerError(true);
         console.error("Login failed:", result.error);
       } else {
-        setUser(result);
         router.push("/helloWorld");
       }
       setLoading(false);

@@ -11,6 +11,7 @@ import LoadingButton from "../components/LoadingButton";
 export default function Content() {
   const router = useRouter();
   const { data, status } = useSession();
+
   const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
@@ -27,6 +28,8 @@ export default function Content() {
   if (loading || status === "loading") {
     return <LoadingPage />;
   }
+
+  //
 
   return (
     <div className="bg-gray-100 min-h-screen flex items-center justify-center">
