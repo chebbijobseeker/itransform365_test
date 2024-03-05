@@ -55,81 +55,86 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto mt-8">
-      <div className="mb-6">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="tw-max-w-md tw-mx-auto tw-mt-8"
+    >
+      <div className="tw-mb-6">
         <label
           htmlFor="fullName"
-          className="block text-gray-700 text-sm font-bold mb-2"
+          className="tw-block tw-text-gray-700 tw-text-sm tw-font-bold tw-mb-2"
         >
           Full Name
         </label>
         <input
           type="text"
           id="fullName"
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="tw-shadow tw-appearance-none tw-border tw-rounded tw-w-full tw-py-2 tw-px-3 tw-text-gray-700 tw-leading-tight tw-focus:tw-outline-none tw-focus:tw-shadow-outline"
           placeholder="Enter your full name"
           {...register("fullName")}
         />
         {errors.fullName && (
-          <p className="text-red-500 text-xs italic">
+          <p className="tw-text-red-500 tw-text-xs tw-italic">
             {errors.fullName.message}
           </p>
         )}
       </div>
-      <div className="mb-6">
+      <div className="tw-mb-6">
         <label
           htmlFor="email"
-          className="block text-gray-700 text-sm font-bold mb-2"
+          className="tw-block tw-text-gray-700 tw-text-sm tw-font-bold tw-mb-2"
         >
           Email Address
         </label>
         <input
           type="email"
           id="email"
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="tw-shadow tw-appearance-none tw-border tw-rounded tw-w-full tw-py-2 tw-px-3 tw-text-gray-700 tw-leading-tight tw-focus:tw-outline-none tw-focus:tw-shadow-outline"
           placeholder="Enter your email address"
           {...register("email")}
         />
         {errors.email && (
-          <p className="text-red-500 text-xs italic">{errors.email.message}</p>
+          <p className="tw-text-red-500 tw-text-xs tw-italic">
+            {errors.email.message}
+          </p>
         )}
       </div>
-      <div className="mb-6">
+      <div className="tw-mb-6">
         <label
           htmlFor="password"
-          className="block text-gray-700 text-sm font-bold mb-2"
+          className="tw-block tw-text-gray-700 tw-text-sm tw-font-bold tw-mb-2"
         >
           Password
         </label>
         <input
           type="password"
           id="password"
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="tw-shadow tw-appearance-none tw-border tw-rounded tw-w-full tw-py-2 tw-px-3 tw-text-gray-700 tw-leading-tight tw-focus:tw-outline-none tw-focus:tw-shadow-outline"
           placeholder="Enter your password"
           {...register("password")}
         />
         {errors.password && (
-          <p className="text-red-500 text-xs italic">
+          <p className="tw-text-red-500 tw-text-xs tw-italic">
             {errors.password.message}
           </p>
         )}
       </div>
-      <div className="mb-6">
+      <div className="tw-mb-6">
         <label
           htmlFor="confirmPassword"
-          className="block text-gray-700 text-sm font-bold mb-2"
+          className="tw-block tw-text-gray-700 tw-text-sm tw-font-bold tw-mb-2"
         >
           Confirm Password
         </label>
         <input
           type="password"
           id="confirm_password"
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          className="tw-shadow tw-appearance-none tw-border tw-rounded tw-w-full tw-py-2 tw-px-3 tw-text-gray-700 tw-leading-tight tw-focus:tw-outline-none tw-focus:tw-shadow-outline"
           placeholder="Confirm your password"
           {...register("confirmPassword")}
         />
         {errors.confirmPassword && (
-          <p className="text-red-500 text-xs italic">
+          <p className="tw-text-red-500 tw-text-xs tw-italic">
             {errors.confirmPassword.message}
           </p>
         )}

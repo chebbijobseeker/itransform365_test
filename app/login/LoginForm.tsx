@@ -9,13 +9,12 @@ import {
   loginValidationSchema,
 } from "./loginValidationSchema";
 import { useRouter } from "next/navigation";
-import useStore from "../stores/store";
 import { useState } from "react";
 import LoadingButton from "../components/LoadingButton";
 
 export default function LoginForm() {
   const router = useRouter();
-  const { setUser } = useStore();
+
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState(false);
 
@@ -27,7 +26,7 @@ export default function LoginForm() {
     resolver: zodResolver(loginValidationSchema),
     defaultValues: {
       email: "itransform@gmail.com",
-      password: "password",
+      password: "test123456",
     },
   });
 
@@ -44,7 +43,6 @@ export default function LoginForm() {
         setServerError(true);
         console.error("Login failed:", result.error);
       } else {
-        setUser(result);
         router.push("/helloWorld");
       }
       setLoading(false);
@@ -54,46 +52,41 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto mt-8">
-      <div className="mb-6">
-        <label
-          htmlFor="email"
-          className="block text-gray-700 text-sm font-bold mb-2"
-        >
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="tw-max-w-md tw-mx-auto tw-mt-8"
+    >
+      <div className="mb-3">
+        <label htmlFor="email" className="form-label">
           Email address
         </label>
         <input
           type="email"
-          className="shadow-sm form-control"
+          className="form-control"
           id="email"
           placeholder="Enter your email address"
           {...register("email")}
         />
-        {errors.email && (
-          <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
-        )}
+        {errors.email && <p className="text-danger">{errors.email.message}</p>}
       </div>
-      <div className="mb-6">
-        <label
-          htmlFor="password"
-          className="block text-gray-700 text-sm font-bold mb-2"
-        >
+      <div className="mb-3">
+        <label htmlFor="password" className="form-label">
           Password
         </label>
         <input
           type="password"
-          className="shadow-sm form-control"
+          className="form-control"
           id="password"
           placeholder="Enter your password"
           {...register("password")}
         />
         {errors.password && (
-          <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+          <p className="text-danger">{errors.password.message}</p>
         )}
       </div>
       <LoadingButton buttonText="Login" isLoading={loading} />
       {serverError && (
-        <p className="text-red-500 text-xs mt-4">Wrong email or password</p>
+        <p className="text-danger mt-4">Wrong email or password</p>
       )}
     </form>
   );
