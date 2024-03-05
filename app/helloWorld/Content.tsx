@@ -39,7 +39,7 @@ export default function Content() {
             Hello, World!
           </h1>
           <p className="tw-text-lg tw-text-gray-700 tw-mb-12 tw-text-center">
-            This is a simple "Hello, World!
+            This is a simple "Hello, World! {data?.user?.name}
           </p>
           <div className="tw-flex tw-justify-center">
             <LoadingButton

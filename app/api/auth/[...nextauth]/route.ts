@@ -1,79 +1,131 @@
-import NextAuth from "next-auth";
+import NextAuth, { Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
-import { setCookie } from "nookies";
-import { getTokenCookie } from "../../../lib/auth";
 
-// Function to refresh access token using refresh token
-const refreshAccessToken = async (refreshToken: string) => {
-  try {
-    const response = await axios.post("http://localhost:5000/refresh-token", {
-      refreshToken,
-    });
-    const data = response.data;
-    if (data.accessToken) {
-      return data.accessToken;
-    }
-    return null;
-  } catch (error) {
-    console.error("Error refreshing access token:", error);
-    return null;
-  }
+// Define the extended Session type
+interface CustomSession extends Session {
+  accessToken?: string;
+  accessTokenExpiry?: number;
+  error?: string | null;
+}
+
+// Define the Token type
+interface Token {
+  accessToken: string;
+  accessTokenExpiry: number;
+  refreshToken: string;
+  error?: string | null;
+  user?: any;
+}
+
+type JWT = {
+  accessToken: string;
+  accessTokenExpiry: number;
+  refreshToken: string;
+  user?: any;
 };
 
-const handler = NextAuth({
+async function refreshAccessToken(tokenObject: Token): Promise<Token> {
+  try {
+    const tokenResponse = await axios.post<{
+      accessToken: string;
+      accessTokenExpiry: number;
+      refreshToken: string;
+    }>("" + "auth/refreshToken", {
+      token: tokenObject.refreshToken,
+    });
+
+    return {
+      ...tokenObject,
+      accessToken: tokenResponse.data.accessToken,
+      accessTokenExpiry: tokenResponse.data.accessTokenExpiry,
+      refreshToken: tokenResponse.data.refreshToken,
+    };
+  } catch (error) {
+    return {
+      ...tokenObject,
+      error: "RefreshAccessTokenError",
+    };
+  }
+}
+
+const providers = [
+  CredentialsProvider({
+    name: "Credentials",
+    credentials: {
+      email: {},
+      password: {},
+    },
+    authorize: async (credentials, req) => {
+      try {
+        const user = await axios.post("http://localhost:5000/login", {
+          password: credentials?.password,
+          email: credentials?.email,
+        });
+
+        if (user.data.accessToken) {
+          return user.data;
+        }
+
+        return null;
+      } catch (e) {
+        throw new Error("error");
+      }
+    },
+  }),
+];
+
+const callbacks = {
+  jwt: async ({ token, user }: { token: Token; user: any }) => {
+    if (user) {
+      console.log("this is user ", user);
+      token.accessToken = user.accessToken;
+      token.accessTokenExpiry = user?.data?.accessTokenExpiry;
+      token.refreshToken = user.refreshToken;
+      token.user = user.user;
+    }
+
+    const shouldRefreshTime = Math.round(
+      token.accessTokenExpiry - 60 * 60 * 1000 - Date.now()
+    );
+
+    if (shouldRefreshTime > 0) {
+      return Promise.resolve(token);
+    }
+
+    token = await refreshAccessToken(token);
+    return Promise.resolve(token);
+  },
+  session: async ({
+    session,
+    token,
+  }: {
+    session: CustomSession;
+    token: JWT;
+  }): Promise<CustomSession> => {
+    session.accessToken = token.accessToken;
+    session.accessTokenExpiry = token.accessTokenExpiry;
+    session.user = token.user;
+    // session.error = token.error;
+
+    return session;
+  },
+};
+
+const options = {
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const, // Define session strategy as 'jwt'
   },
   pages: {
     signIn: "/login",
   },
-  providers: [
-    CredentialsProvider({
-      credentials: {
-        email: {},
-        password: {},
-      },
-      async authorize(credentials, req) {
-        try {
-          const response = await axios.post(
-            "http://localhost:5000/login",
-            credentials
-          );
-          const data = response.data;
-          if (data.accessToken && data.refreshToken) {
-            console.log(1);
-            setCookie(null, "refreshToken", data.refreshToken, {
-              maxAge: 60 * 60 * 24,
-              path: "/",
-            });
-
-            return data;
-          }
-        } catch (error) {
-          console.error("Error authorizing user:", error);
-        }
-        return null;
-      },
-    }),
-  ],
   callbacks: {
-    async jwt(params) {
-      const { token, user, account, profile, isNewUser } = params;
-      // Check if token is expired
-      if (token && Date.now() > Date.now() - 60 * 60 * 1000) {
-        const refreshToken = getTokenCookie();
-        if (refreshToken) {
-          const newAccessToken = await refreshAccessToken(refreshToken);
-          if (newAccessToken) {
-            token.accessToken = newAccessToken;
-            token.exp = Math.floor(Date.now() / 1000) + 60 * 60; // Assuming 1 hour expiration
-          }
-        }
-      }
-      return token;
-    },
+    ...callbacks,
   },
-});
+  providers: providers,
+  secret: process.env.NEXTAUTH_SECRET,
+};
+// @ts-ignore
+const handler = NextAuth({ ...options });
 
 export { handler as GET, handler as POST };
