@@ -1,22 +1,24 @@
 export default function HomePage() {
   return (
-    <div className="bg-gray-100 min-h-screen flex items-center justify-center">
-      <div className="w-full max-w-screen-lg mx-auto p-8">
-        <div className="bg-white rounded-lg shadow-xl p-8">
-          <h1 className="text-4xl font-bold mb-8 text-center">ITRANSFORM365</h1>
-          <p className="text-lg text-gray-700 mb-12 text-center">
+    <div className="tw-bg-gray-100 tw-min-h-screen tw-flex tw-items-center tw-justify-center">
+      <div className="tw-w-full tw-max-w-screen-lg tw-mx-auto tw-p-8">
+        <div className="tw-bg-white tw-rounded-lg tw-shadow-xl tw-p-8">
+          <h1 className="tw-text-4xl tw-font-bold tw-mb-8 tw-text-center">
+            ITRANSFORM365
+          </h1>
+          <p className="tw-text-lg tw-text-gray-700 tw-mb-12 tw-text-center">
             technical assignment for full stack JS Post
           </p>
-          <div className="flex justify-center">
+          <div className="tw-flex tw-justify-center">
             <a
               href="/login"
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded mr-4"
+              className="tw-bg-blue-500 tw-hover:bg-blue-600 tw-text-white tw-font-bold tw-py-3 tw-px-6 tw-rounded tw-mr-4"
             >
               Login
             </a>
             <a
               href="/register"
-              className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded"
+              className="tw-bg-gray-300 tw-hover:bg-gray-400 tw-text-gray-800 tw-font-bold tw-py-3 tw-px-6 tw-rounded"
             >
               Register
             </a>
